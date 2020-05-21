@@ -57,4 +57,5 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20200506231410-2ff61e1afc86
 )
 
+// FIXME remove when a new version of github.com/go-git/go-git is released
 replace github.com/go-git/go-git/v5 => github.com/twpayne/go-git/v5 v5.0.1-0.20200517130039-70111361e674

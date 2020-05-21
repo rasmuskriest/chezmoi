@@ -41,31 +41,27 @@ func (c *Config) runExecuteTemplateCmd(cmd *cobra.Command, args []string, source
 		}
 	}
 
-	output := &strings.Builder{}
-	switch len(args) {
-	case 0:
+	if len(args) == 0 {
 		data, err := ioutil.ReadAll(c.stdin)
 		if err != nil {
 			return err
 		}
-		result, err := sourceState.ExecuteTemplateData("stdin", data)
+		output, err := sourceState.ExecuteTemplateData("stdin", data)
 		if err != nil {
 			return err
 		}
-		if _, err = output.Write(result); err != nil {
-			return err
-		}
-	default:
-		for i, arg := range args {
-			result, err := sourceState.ExecuteTemplateData("arg"+strconv.Itoa(i+1), []byte(arg))
-			if err != nil {
-				return err
-			}
-			if _, err := output.Write(result); err != nil {
-				return err
-			}
-		}
+		return c.writeOutput(output)
 	}
 
-	return c.writeOutput([]byte(output.String()))
+	output := &strings.Builder{}
+	for i, arg := range args {
+		result, err := sourceState.ExecuteTemplateData("arg"+strconv.Itoa(i+1), []byte(arg))
+		if err != nil {
+			return err
+		}
+		if _, err := output.Write(result); err != nil {
+			return err
+		}
+	}
+	return c.writeOutputString(output.String())
 }

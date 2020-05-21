@@ -14,7 +14,7 @@ var sourcePathCmd = &cobra.Command{
 	Short:   "Print the path of a target in the source state",
 	Long:    mustGetLongHelp("source-path"),
 	Example: getExample("source-path"),
-	RunE:    config.runSourcePathCmd,
+	RunE:    config.makeRunEWithSourceState(config.runSourcePathCmd),
 }
 
 func init() {
@@ -23,21 +23,19 @@ func init() {
 	markRemainingZshCompPositionalArgumentsAsFiles(sourcePathCmd, 1)
 }
 
-func (c *Config) runSourcePathCmd(cmd *cobra.Command, args []string) error {
+func (c *Config) runSourcePathCmd(cmd *cobra.Command, args []string, sourceState *chezmoi.SourceState) error {
 	if len(args) == 0 {
 		return c.writeOutputString(filepath.FromSlash(c.SourceDir + eolStr))
 	}
 
-	return c.makeRunEWithSourceState(func(cmd *cobra.Command, args []string, sourceState *chezmoi.SourceState) error {
-		sourcePaths, err := c.getSourcePaths(sourceState, args)
-		if err != nil {
-			return err
-		}
+	sourcePaths, err := c.getSourcePaths(sourceState, args)
+	if err != nil {
+		return err
+	}
 
-		sb := &strings.Builder{}
-		for _, sourcePath := range sourcePaths {
-			sb.WriteString(filepath.FromSlash(sourcePath) + eolStr)
-		}
-		return c.writeOutputString(sb.String())
-	})(cmd, args)
+	sb := &strings.Builder{}
+	for _, sourcePath := range sourcePaths {
+		sb.WriteString(filepath.FromSlash(sourcePath) + eolStr)
+	}
+	return c.writeOutputString(sb.String())
 }

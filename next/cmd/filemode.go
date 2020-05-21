@@ -10,23 +10,23 @@ import (
 // github.com/spf13/pflag.Value interface for use as a command line flag.
 type fileMode os.FileMode
 
-func (p *fileMode) FileMode() os.FileMode {
-	return os.FileMode(*p)
+func (m *fileMode) FileMode() os.FileMode {
+	return os.FileMode(*m)
 }
 
-func (p *fileMode) Set(s string) error {
-	v, err := strconv.ParseUint(s, 8, 32)
-	if err != nil || os.FileMode(v)&os.ModePerm != os.FileMode(v) {
+func (m *fileMode) Set(s string) error {
+	mUint64, err := strconv.ParseUint(s, 8, 32)
+	if err != nil || os.FileMode(mUint64)&os.ModePerm != os.FileMode(mUint64) {
 		return fmt.Errorf("%s: invalid mode", s)
 	}
-	*p = fileMode(v)
+	*m = fileMode(mUint64)
 	return nil
 }
 
-func (p *fileMode) String() string {
-	return fmt.Sprintf("%03o", *p)
+func (m *fileMode) String() string {
+	return fmt.Sprintf("%03o", *m)
 }
 
-func (p *fileMode) Type() string {
-	return "mode"
+func (m *fileMode) Type() string {
+	return "file mode"
 }
