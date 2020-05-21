@@ -35,7 +35,7 @@ func (c *Config) runVerifyCmd(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	if dryRunSystem.Modified() {
-		return errExitFailure
+		return ErrExitCode(1)
 	}
 	return nil
 }

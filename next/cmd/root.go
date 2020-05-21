@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -9,27 +8,6 @@ import (
 	"github.com/coreos/go-semver/semver"
 	"github.com/spf13/cobra"
 )
-
-const (
-	doesNotRequireValidConfig    = "chezmoi_annotation_does_not_require_valid_config"
-	modifiesConfigFile           = "chezmoi_annotation_modifies_config_file"
-	modifiesDestinationDirectory = "chezmoi_annotation_modifies_destination_directory"
-	modifiesSourceDirectory      = "chezmoi_annotation_modifies_source_directory"
-	requiresConfigDirectory      = "chezmoi_annotation_requires_config_directory"
-	requiresSourceDirectory      = "chezmoi_annotation_requires_source_directory"
-)
-
-var config = mustNewConfig()
-
-// A VersionInfo contains a version.
-type VersionInfo struct {
-	Version string
-	Commit  string
-	Date    string
-	BuiltBy string
-}
-
-var version *semver.Version
 
 var rootCmd = &cobra.Command{
 	Use:                "chezmoi",
@@ -40,10 +18,33 @@ var rootCmd = &cobra.Command{
 	PersistentPostRunE: config.persistentPostRunRootE,
 }
 
-var (
-	errExitFailure = errors.New("")
-	initErr        error
+const (
+	doesNotRequireValidConfig    = "chezmoi_annotation_does_not_require_valid_config"
+	modifiesConfigFile           = "chezmoi_annotation_modifies_config_file"
+	modifiesDestinationDirectory = "chezmoi_annotation_modifies_destination_directory"
+	modifiesSourceDirectory      = "chezmoi_annotation_modifies_source_directory"
+	requiresConfigDirectory      = "chezmoi_annotation_requires_config_directory"
+	requiresSourceDirectory      = "chezmoi_annotation_requires_source_directory"
 )
+
+var (
+	config  = mustNewConfig()
+	initErr error
+)
+
+// An ErrExitCode indicates the the main program should exit with the given
+// code.
+type ErrExitCode int
+
+func (e ErrExitCode) Error() string { return "" }
+
+// A VersionInfo contains a version.
+type VersionInfo struct {
+	Version string
+	Commit  string
+	Date    string
+	BuiltBy string
+}
 
 func init() {
 	if err := config.init(rootCmd); err != nil {
@@ -60,12 +61,11 @@ func Execute(v VersionInfo) error {
 
 	var versionComponents []string
 	if v.Version != "" {
-		var err error
-		version, err = semver.NewVersion(strings.TrimPrefix(v.Version, "v"))
+		version, err := semver.NewVersion(strings.TrimPrefix(v.Version, "v"))
 		if err != nil {
 			return err
 		}
-		versionComponents = append(versionComponents, v.Version)
+		versionComponents = append(versionComponents, version.String())
 	} else {
 		versionComponents = append(versionComponents, "dev")
 	}

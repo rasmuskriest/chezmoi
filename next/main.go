@@ -28,6 +28,10 @@ func main() {
 		if s := err.Error(); s != "" {
 			fmt.Fprintf(os.Stderr, "chezmoi: %s\n", s)
 		}
-		os.Exit(1)
+		code := 1
+		if exitCode, ok := err.(cmd.ErrExitCode); ok {
+			code = int(exitCode)
+		}
+		os.Exit(code)
 	}
 }

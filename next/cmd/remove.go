@@ -20,6 +20,7 @@ var removeCmd = &cobra.Command{
 	RunE:    config.makeRunEWithSourceState(config.runRemoveCmd),
 	Annotations: map[string]string{
 		modifiesDestinationDirectory: "true",
+		modifiesSourceDirectory:      "true",
 	},
 }
 

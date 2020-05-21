@@ -484,7 +484,7 @@ func (c *Config) getSourceState() (*chezmoi.SourceState, error) {
 	}
 
 	if minVersion := s.MinVersion(); c.version.LessThan(minVersion) {
-		return nil, fmt.Errorf("source state requires version %s or later, chezmoi is version %s", minVersion, version)
+		return nil, fmt.Errorf("source state requires version %s or later, chezmoi is version %s", minVersion, c.version)
 	}
 
 	return s, nil

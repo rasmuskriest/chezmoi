@@ -63,7 +63,7 @@ func TestPermValue(t *testing.T) {
 			} else {
 				require.NoError(t, err)
 				assert.Equal(t, tc.expectedString, p.String())
-				assert.Equal(t, "mode", p.Type())
+				assert.Equal(t, "file mode", p.Type())
 			}
 		})
 	}
